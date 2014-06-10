@@ -1,4 +1,5 @@
 var express = require('express');
+var ObjectID = require('mongodb').ObjectID;
 var router = express.Router();
 
 /* GET userlist */
@@ -10,11 +11,17 @@ router.get('/userlist', function(req, res) {
 });
 
 /* POST to add user */
-router.post('/adduser', function(req, res) {
+router.post('/modifyuser', function(req, res) {
     var db = req.db;
+    var found = '';
 
-    console.log(req.body);
-    db.collection('userlist').insert(req.body, function(err, result) {
+    req.body._id = ObjectID(req.body._id);
+
+//    db.collection('userlist').find({_id: req.body._id}, {}).toArray(function(err, doc) {
+//	console.log(doc);
+//    });
+
+    db.collection('userlist').save(req.body, function(err, result) {
 	res.send(
 	    (err === null) ? {msg: ''} : {msg: err}
 	);
@@ -26,7 +33,7 @@ router.delete('/deleteuser/:id', function(req, res) {
     var db = req.db;
     var userToDelete = req.params.id;
 
-    db.collection('userlist').removeById(userToDelete, function(err, result) {
+    db.collection('userlist').removeById(ObjectID(userToDelete), function(err, result) {
 	res.send(
 	    (result === 1) ? {msg: ''} : {msg: 'error: ' + err}
 	);

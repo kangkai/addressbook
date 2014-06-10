@@ -19,18 +19,25 @@ block content
       fieldset(style="text-align:right;")
         legend
           h2 User Info
+        input#inputUserId(type='hidden')
         label User Name: 
         input#inputUserName(type='text', placeholder='Username')
         br
+        label Email: 
         input#inputUserEmail(type='text', placeholder='Email')
         br
+        label Full Name: 
         input#inputUserFullname(type='text', placeholder='Full Name')
         br
+        label Age: 
         input#inputUserAge(type='text', placeholder='Age')
         br
+        label Location: 
         input#inputUserLocation(type='text', placeholder='Location')
         br
+        label Gender: 
         input#inputUserGender(type='text', placeholder='gender')
+        br
         br
         textarea#textareaUserNotes(placeholder='Notes', rows='6', cols='36')
         br

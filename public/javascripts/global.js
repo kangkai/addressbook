@@ -17,15 +17,10 @@ $(document).ready(function() {
 
 
 function alertInfo(event) {
-    var nameList = _.map(userListData, function (item) {
-	return item.username;
-    });
-
-    alert(nameList.join(', '));
-
     _.each(userListData, function (obj) {
 	console.log(JSON.stringify(obj));
     });
+    alert($(this).attr('rel'));
 };
 
 // Fill table with data
@@ -40,7 +35,7 @@ function populateTable() {
         // For each item in our JSON, add a table row and cells to the content string
         $.each(data, function() {
             tableContent += '<tr>';
-            tableContent += '<td><a href="#" class="linkshowuser" rel="' + this.username + '" title="Show Details">' + this.username + '</td>';
+            tableContent += '<td><a href="#" class="linkshowuser" rel="' + this._id + '" title="Show Details">' + this.username + '</td>';
             tableContent += '<td>' + this.email + '</td>';
             tableContent += '<td><a href="#" class="linkdeleteuser" rel="' + this._id + '">delete</a></td>';
             tableContent += '</tr>';
@@ -51,6 +46,15 @@ function populateTable() {
     });
 };
 
+function refreshPage() {
+    // Clear the form inputs
+    $('#userInfo fieldset input').val('');
+    $('#userInfo fieldset textarea').val('');
+
+    // Update the table
+    populateTable();
+};
+
 // Show User Info
 function showUserInfo(event) {
 
@@ -58,15 +62,16 @@ function showUserInfo(event) {
     event.preventDefault();
 
     // Retrieve username from link rel attribute
-    var thisUserName = $(this).attr('rel');
+    var thisUserId = $(this).attr('rel');
 
     // Get Index of object based on id value
-    var arrayPosition = userListData.map(function(arrayItem) { return arrayItem.username; }).indexOf(thisUserName);
+    var arrayPosition = userListData.map(function(arrayItem) { return arrayItem._id; }).indexOf(thisUserId);
 
     // Get our User Object
     var thisUserObject = userListData[arrayPosition];
 
     // populate into form
+    $('#userInfo fieldset input#inputUserId').val(thisUserObject._id);
     $('#userInfo fieldset input#inputUserName').val(thisUserObject.username);
     $('#userInfo fieldset input#inputUserEmail').val(thisUserObject.email);
     $('#userInfo fieldset input#inputUserFullname').val(thisUserObject.fullname);
@@ -77,13 +82,13 @@ function showUserInfo(event) {
 
 };
 
-// Add User
+// Modify User
 function modifyUser(event) {
     event.preventDefault();
 
     // Super basic validation - increase errorCount variable if any fields are blank
     var errorCount = 0;
-    $('#addUser input').each(function(index, val) {
+    $('#userInfo input').each(function(index, val) {
         if($(this).val() === '') { errorCount++; }
     });
 
@@ -91,35 +96,28 @@ function modifyUser(event) {
     if(errorCount === 0) {
 
         // If it is, compile all user info into one object
-        var newUser = {
-            'username': $('#addUser fieldset input#inputUserName').val(),
-            'email': $('#addUser fieldset input#inputUserEmail').val(),
-            'fullname': $('#addUser fieldset input#inputUserFullname').val(),
-            'age': $('#addUser fieldset input#inputUserAge').val(),
-            'location': $('#addUser fieldset input#inputUserLocation').val(),
-            'gender': $('#addUser fieldset input#inputUserGender').val(),
-            'notes': $('#addUser fieldset textarea#textareaUserNotes').val()
-        }
+        var userInfo = {
+            '_id': $('#userInfo fieldset input#inputUserId').val(),
+            'username': $('#userInfo fieldset input#inputUserName').val(),
+            'email': $('#userInfo fieldset input#inputUserEmail').val(),
+            'fullname': $('#userInfo fieldset input#inputUserFullname').val(),
+            'age': $('#userInfo fieldset input#inputUserAge').val(),
+            'location': $('#userInfo fieldset input#inputUserLocation').val(),
+            'gender': $('#userInfo fieldset input#inputUserGender').val(),
+            'notes': $('#userInfo fieldset textarea#textareaUserNotes').val()
+        };
 
-	alert(JSON.stringify(newUser));
         // Use AJAX to post the object to our adduser service
         $.ajax({
             type: 'POST',
-            data: newUser,
-            url: '/users/adduser',
+            data: userInfo,
+            url: '/users/modifyuser',
             dataType: 'JSON'
         }).done(function( response ) {
 
             // Check for successful (blank) response
             if (response.msg === '') {
-
-                // Clear the form inputs
-                $('#addUser fieldset input').val('');
-		$('#addUser fieldset textarea').val('');
-
-                // Update the table
-                populateTable();
-
+		refreshPage();
             }
             else {
 
@@ -142,8 +140,11 @@ function deleteUser(event) {
 
     event.preventDefault();
 
+    var id = $('#userInfo fieldset input#inputUserId').val();
+    var username = $('#userInfo fieldset input#inputUserFullname').val();
+
     // Pop up a confirmation dialog
-    var confirmation = confirm('Are you sure you want to delete this user?');
+    var confirmation = confirm('Are you sure you want to delete this user?\n\n' + username);
 
     // Check and make sure the user confirmed
     if (confirmation === true) {
@@ -151,7 +152,7 @@ function deleteUser(event) {
         // If they did, do our delete
         $.ajax({
             type: 'DELETE',
-            url: '/users/deleteuser/' + $(this).attr('rel')
+            url: '/users/deleteuser/' + id
         }).done(function( response ) {
 
             // Check for a successful (blank) response
@@ -161,9 +162,7 @@ function deleteUser(event) {
                 alert('Error: ' + response.msg);
             }
 
-            // Update the table
-            populateTable();
-
+	    refreshPage();
         });
 
     }
