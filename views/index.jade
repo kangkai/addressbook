@@ -1,0 +1,57 @@
+extends layout
+
+block content
+  h1 An addressbook
+
+  #wrapper
+
+    #userList
+      h2 User List
+      table
+        thead
+          th UserName
+          th Email
+          th Delete?
+        tbody
+
+    #userInfo
+      h2 User Info
+      p
+        strong Name: 
+        | <span id='userInfoName'></span>
+        br
+        strong Age: 
+        | <span id='userInfoAge'></span>
+        br
+        strong Gender: 
+        | <span id='userInfoGender'></span>
+        br
+        strong Location: 
+        | <span id='userInfoLocation'></span>
+        br
+        strong Notes: 
+        | <span id='userInfoNotes'></span>
+
+
+    #addUser
+      h2 Add User
+      form#addUserForm(method="post" enctype="multipart/form-data")
+      fieldset(style="text-align:right;")
+        legend
+          strong User Info
+        label User Name: 
+        input#inputUserName(type='text', placeholder='Username')
+        br
+        input#inputUserEmail(type='text', placeholder='Email')
+        br
+        input#inputUserFullname(type='text', placeholder='Full Name')
+        br
+        input#inputUserAge(type='text', placeholder='Age')
+        br
+        input#inputUserLocation(type='text', placeholder='Location')
+        br
+        input#inputUserGender(type='text', placeholder='gender')
+        br
+        textarea#textareaUserNotes(placeholder='Notes', rows='6', cols='36')
+        br
+        button#btnAddUser Add User
