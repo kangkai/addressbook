@@ -10,7 +10,8 @@ $(document).ready(function() {
     // Delete User link click
     $('#userList table tbody').on('click', 'td a.linkdeleteuser', alertInfo);
 
-    $('#btnAddUser').on('click', addUser);
+    $('#btnModify').on('click', modifyUser);
+    $('#btnDelete').on('click', deleteUser);
 });
 
 
@@ -65,27 +66,19 @@ function showUserInfo(event) {
     // Get our User Object
     var thisUserObject = userListData[arrayPosition];
 
-    //Populate Info Box
-    $('#userInfoName').text(thisUserObject.fullname);
-    $('#userInfoAge').text(thisUserObject.age);
-    $('#userInfoGender').text(thisUserObject.gender);
-    $('#userInfoLocation').text(thisUserObject.location);
-    $('#userInfoNotes').text(''); // clear Notes first
-    $('#userInfoNotes').text(thisUserObject.notes);
-
     // populate into form
-    $('#addUser fieldset input#inputUserName').val(thisUserObject.username);
-    $('#addUser fieldset input#inputUserEmail').val(thisUserObject.email);
-    $('#addUser fieldset input#inputUserFullname').val(thisUserObject.fullname);
-    $('#addUser fieldset input#inputUserAge').val(thisUserObject.age);
-    $('#addUser fieldset input#inputUserLocation').val(thisUserObject.location);
-    $('#addUser fieldset input#inputUserGender').val(thisUserObject.gender)
-    $('#addUser fieldset textarea#textareaUserNotes').val(thisUserObject.notes);
+    $('#userInfo fieldset input#inputUserName').val(thisUserObject.username);
+    $('#userInfo fieldset input#inputUserEmail').val(thisUserObject.email);
+    $('#userInfo fieldset input#inputUserFullname').val(thisUserObject.fullname);
+    $('#userInfo fieldset input#inputUserAge').val(thisUserObject.age);
+    $('#userInfo fieldset input#inputUserLocation').val(thisUserObject.location);
+    $('#userInfo fieldset input#inputUserGender').val(thisUserObject.gender);
+    $('#userInfo fieldset textarea#textareaUserNotes').val(thisUserObject.notes);
 
 };
 
 // Add User
-function addUser(event) {
+function modifyUser(event) {
     event.preventDefault();
 
     // Super basic validation - increase errorCount variable if any fields are blank

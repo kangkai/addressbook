@@ -6,7 +6,6 @@ block content
   #wrapper
 
     #userList
-      h2 User List
       table
         thead
           th UserName
@@ -14,31 +13,12 @@ block content
           th Delete?
         tbody
 
+
     #userInfo
-      h2 User Info
-      p
-        strong Name: 
-        | <span id='userInfoName'></span>
-        br
-        strong Age: 
-        | <span id='userInfoAge'></span>
-        br
-        strong Gender: 
-        | <span id='userInfoGender'></span>
-        br
-        strong Location: 
-        | <span id='userInfoLocation'></span>
-        br
-        strong Notes: 
-        | <span id='userInfoNotes'></span>
-
-
-    #addUser
-      h2 Add User
-      form#addUserForm(method="post" enctype="multipart/form-data")
+      form#userInfoForm(method="post" enctype="multipart/form-data")
       fieldset(style="text-align:right;")
         legend
-          strong User Info
+          h2 User Info
         label User Name: 
         input#inputUserName(type='text', placeholder='Username')
         br
@@ -54,4 +34,5 @@ block content
         br
         textarea#textareaUserNotes(placeholder='Notes', rows='6', cols='36')
         br
-        button#btnAddUser Add User
+        button#btnDelete Delete
+        button#btnModify Modify
