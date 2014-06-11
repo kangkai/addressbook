@@ -5,6 +5,34 @@ block content
 
   #wrapper
 
+    button#add-user Add User
+    #dialog-form(title='Add new user')
+      form
+        fieldset(style="text-align:right;")
+          legend
+            strong All fields are required
+          label User Id: 
+          input#popupUserId(type='text', placeholder='User Id' value="" class="text ui-widget-content ui-corner-all")
+          br
+          label Email: 
+          input#popupUserEmail(type='text', placeholder='Email')
+          br
+          label Full Name: 
+          input#popupUserFullname(type='text', placeholder='Full Name')
+          br
+          label Age: 
+          input#popupUserAge(type='text', placeholder='Age')
+          br
+          label Location: 
+          input#popupUserLocation(type='text', placeholder='Location')
+          br
+          label Gender: 
+          input#popupUserGender(type='text', placeholder='Gender')
+          br
+          br
+          textarea#popupUserNotes(placeholder='Notes', rows='6', cols='36')
+
+
     #userList
       table
         thead
@@ -20,8 +48,8 @@ block content
         legend
           h2 User Info
         input#inputUserId(type='hidden')
-        label User Name: 
-        input#inputUserName(type='text', placeholder='Username')
+        label User Id: 
+        input#inputUserName(type='text', placeholder='User Id')
         br
         label Email: 
         input#inputUserEmail(type='text', placeholder='Email')
@@ -36,7 +64,7 @@ block content
         input#inputUserLocation(type='text', placeholder='Location')
         br
         label Gender: 
-        input#inputUserGender(type='text', placeholder='gender')
+        input#inputUserGender(type='text', placeholder='Gender')
         br
         br
         textarea#textareaUserNotes(placeholder='Notes', rows='6', cols='36')
