@@ -1,4 +1,4 @@
 addressbook
 ===========
 
-A toy nodejs addressbook
+A toy nodejs and jquery addressbook.
