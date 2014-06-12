@@ -182,9 +182,9 @@ function popupForm() {
 	useremail = $("#popupUserEmail"),
 	userfullname = $("#popupUserFullname"),
 	userage = $("#popupUserAge"),
-	userlocation = $("popupUserLocation"),
-	usergender = $("popupUserGender"),
-	usernotes = $("popupUserNotes");
+	userlocation = $("#popupUserLocation"),
+	usergender = $("#popupUserGender"),
+	usernotes = $("#popupUserNotes");
     var tips = $( ".validateTips" );
 
     var allFields = $([]).add(userid).add(useremail).add(userfullname).add(userage).add(userlocation).add(usergender);
@@ -221,7 +221,7 @@ function popupForm() {
     
     $( "#dialog-form" ).dialog({
 	autoOpen: false,
-	height: 500,
+	height: 540,
 	width: 400,
 	modal: true,
 	buttons: {
@@ -229,24 +229,50 @@ function popupForm() {
 		var bValid = true;
 		allFields.removeClass( "ui-state-error" );
 		
-		bValid = bValid && checkLength( popupUserId, "userid", 3, 16 );
-		bValid = bValid && checkLength( popupUserEmail, "email", 6, 80 );
-		bValid = bValid && checkLength( popupUserFullname, "Full Name", 6, 80 );
-		bValid = bValid && checkLength( popupUserAge, "Age", 1, 3 );
-		bValid = bValid && checkLength( popupUserLocation, "Location", 3, 80 );
-		bValid = bValid && checkLength( popupUserGender, "Gender", 1, 6 );
+		bValid = bValid && checkLength( userid, "userid", 3, 16 );
+		bValid = bValid && checkLength( useremail, "email", 6, 80 );
+		bValid = bValid && checkLength( userfullname, "Full Name", 3, 80 );
+		bValid = bValid && checkLength( userage, "Age", 1, 3 );
+		bValid = bValid && checkLength( userlocation, "Location", 3, 80 );
+		bValid = bValid && checkLength( usergender, "Gender", 1, 6 );
 		
-		bValid = bValid && checkRegexp( name, /^[a-z]([0-9a-z_])+$/i, "Username may consist of a-z, 0-9, underscores, begin with a letter." );
+		bValid = bValid && checkRegexp( userid, /^[a-z]([0-9a-z_])+$/i, "Username may consist of a-z, 0-9, underscores, begin with a letter." );
 		// From jquery.validate.js (by joern), contributed by Scott Gonzalez: http://projects.scottsplayground.com/email_address_validation/
-		bValid = bValid && checkRegexp( email, /^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i, "eg. ui@jquery.com" );
-		bValid = bValid && checkRegexp( password, /^([0-9a-zA-Z])+$/, "Password field only allow : a-z 0-9" );
+		bValid = bValid && checkRegexp( useremail, /^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i, "eg. ui@jquery.com" );
+		// bValid = bValid && checkRegexp( password, /^([0-9a-zA-Z])+$/, "Password field only allow : a-z 0-9" );
 		
 		if ( bValid ) {
-		    $( "#users tbody" ).append( "<tr>" +
-						"<td>" + name.val() + "</td>" +
-						"<td>" + email.val() + "</td>" +
-						"<td>" + password.val() + "</td>" +
-						"</tr>" );
+
+		    var userInfo = {
+			'username': $('#dialog-form fieldset input#popupUserId').val(),
+			'email': $('#dialog-form fieldset input#popupUserEmail').val(),
+			'fullname': $('#dialog-form fieldset input#popupUserFullname').val(),
+			'age': $('#dialog-form fieldset input#popupUserAge').val(),
+			'location': $('#dialog-form fieldset input#popupUserLocation').val(),
+			'gender': $('#dialog-form fieldset input#popupUserGender').val(),
+			'notes': $('#dialog-form fieldset textarea#popupUserNotes').val()
+		    };
+
+		    // Use AJAX to post the object to our adduser service
+		    $.ajax({
+			type: 'POST',
+			data: userInfo,
+			url: '/users/modifyuser',
+			dataType: 'JSON'
+		    }).done(function( response ) {
+
+			// Check for successful (blank) response
+			if (response.msg === '') {
+			    refreshPage();
+			}
+			else {
+
+			    // If something goes wrong, alert the error message that our service returned
+			    alert('Error: ' + response.msg);
+
+			}
+		    });
+
 		    $( this ).dialog( "close" );
 		}
             },
@@ -256,6 +282,7 @@ function popupForm() {
 	},
 	close: function() {
             allFields.val( "" ).removeClass( "ui-state-error" );
+            usernotes.val( "" ).removeClass( "ui-state-error" );
 	}
     });
     

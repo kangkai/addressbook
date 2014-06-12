@@ -8,9 +8,8 @@ block content
     button#add-user Add User
     #dialog-form(title='Add new user')
       form
+        p(class="validateTips") All fields required except "Notes".
         fieldset(style="text-align:right;")
-          legend
-            strong All fields are required
           label User Id: 
           input#popupUserId(type='text', placeholder='User Id' value="" class="text ui-widget-content ui-corner-all")
           br
