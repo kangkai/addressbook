@@ -6,6 +6,7 @@ block content
   #wrapper
 
     button#add-user Add User
+
     #dialog-form(title='Add new user')
       form
         p(class="validateTips") All fields required except "Notes".
@@ -30,6 +31,16 @@ block content
           br
           br
           textarea#popupUserNotes(placeholder='Notes', rows='6', cols='36')
+          br
+
+          span(class="btn btn-success fileinput-button")
+            i(class="glyphicon glyphicon-plus")
+            span Select avata image...
+            input#fileupload(type="file" name="files[]" multiple)
+          #progress(class="progress")
+            #progressbar(class="progress-bar progress-bar-success")
+          #files(class="files")
+          
 
 
     #userList
