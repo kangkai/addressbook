@@ -210,8 +210,6 @@ router.post('/avatar', function(req, res) {
 	    var data = fs.readFileSync(file.path);
 	    fileInfo.data = new MongoDb.Binary(data);
 
-	    console.log(fileInfo);
-
 	    db.collection('avatar').save(fileInfo, function(err, result) {
 		if (err !== null) {
 		    console.log("db save fail");
@@ -272,75 +270,72 @@ router.post('/avatar', function(req, res) {
     };
 
 
-
-
-        res.setHeader(
-            'Access-Control-Allow-Origin',
-            options.accessControl.allowOrigin
-        );
-        res.setHeader(
-            'Access-Control-Allow-Methods',
-            options.accessControl.allowMethods
-        );
-        res.setHeader(
-            'Access-Control-Allow-Headers',
-            options.accessControl.allowHeaders
-        );
-        var handleResult = function (result, redirect) {
-            if (redirect) {
-                res.writeHead(302, {
-                    'Location': redirect.replace(
-                            /%s/,
-                        encodeURIComponent(JSON.stringify(result))
-                    )
-                });
-                res.end();
-            } else {
-                res.writeHead(200, {
-                    'Content-Type': req.headers.accept
-                        .indexOf('application/json') !== -1 ?
-                        'application/json' : 'text/plain'
-                });
-                res.end(JSON.stringify(result));
-            }
-        },
-        setNoCacheHeaders = function () {
-            res.setHeader('Pragma', 'no-cache');
-            res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
-            res.setHeader('Content-Disposition', 'inline; filename="files.json"');
-        },
-        handler = new UploadHandler(req, res, handleResult);
-
-        switch (req.method) {
-        case 'OPTIONS':
+    // Let's rock
+    res.setHeader(
+        'Access-Control-Allow-Origin',
+        options.accessControl.allowOrigin
+    );
+    res.setHeader(
+        'Access-Control-Allow-Methods',
+        options.accessControl.allowMethods
+    );
+    res.setHeader(
+        'Access-Control-Allow-Headers',
+        options.accessControl.allowHeaders
+    );
+    var handleResult = function (result, redirect) {
+        if (redirect) {
+            res.writeHead(302, {
+                'Location': redirect.replace(
+                        /%s/,
+                    encodeURIComponent(JSON.stringify(result))
+                )
+            });
             res.end();
-            break;
-        case 'HEAD':
-        case 'GET':
-            if (req.url === '/') {
-                setNoCacheHeaders();
-                if (req.method === 'GET') {
-                    handler.get();
-                } else {
-                    res.end();
-                }
-            } else {
-                fileServer.serve(req, res);
-            }
-            break;
-        case 'POST':
+        } else {
+            res.writeHead(200, {
+                'Content-Type': req.headers.accept
+                    .indexOf('application/json') !== -1 ?
+                    'application/json' : 'text/plain'
+            });
+            res.end(JSON.stringify(result));
+        }
+    },
+    setNoCacheHeaders = function () {
+        res.setHeader('Pragma', 'no-cache');
+        res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+        res.setHeader('Content-Disposition', 'inline; filename="files.json"');
+    },
+    handler = new UploadHandler(req, res, handleResult);
+
+    switch (req.method) {
+    case 'OPTIONS':
+        res.end();
+        break;
+    case 'HEAD':
+    case 'GET':
+        if (req.url === '/') {
             setNoCacheHeaders();
-            handler.post();
-            break;
-        case 'DELETE':
-            handler.destroy();
-            break;
-        default:
-            res.statusCode = 405;
-            res.end();
-        };
-
-    console.log("the end");
+            if (req.method === 'GET') {
+                handler.get();
+            } else {
+                res.end();
+            }
+        } else {
+            fileServer.serve(req, res);
+        }
+        break;
+    case 'POST':
+        setNoCacheHeaders();
+        handler.post();
+        break;
+    case 'DELETE':
+        handler.destroy();
+        break;
+    default:
+        res.statusCode = 405;
+        res.end();
+    };
 
 });
 
