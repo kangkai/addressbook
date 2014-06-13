@@ -39,8 +39,9 @@ block content
             input#fileupload(type="file" name="files[]" multiple)
           #progress(class="progress")
             #progressbar(class="progress-bar progress-bar-success")
-          #files(class="files")
-          
+          #avatar
+            #avatarImg
+            input#avatarId(type='hidden')
 
 
     #userList
@@ -57,6 +58,7 @@ block content
       fieldset(style="text-align:right;")
         legend
           h2 User Info
+        #UserAvatar
         input#inputUserId(type='hidden')
         label User Id: 
         input#inputUserName(type='text', placeholder='User Id')

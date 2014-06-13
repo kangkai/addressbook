@@ -1,5 +1,6 @@
 var express = require('express');
-var ObjectID = require('mongodb').ObjectID;
+var MongoDb = require('mongodb');
+var ObjectID = MongoDb.ObjectID;
 var router = express.Router();
 
 /* GET userlist */
@@ -16,15 +17,17 @@ router.post('/modifyuser', function(req, res) {
     var found = '';
 
     req.body._id = ObjectID(req.body._id);
+    req.body.avatarid = ObjectID(req.body.avatarid);
 
-//    db.collection('userlist').find({_id: req.body._id}, {}).toArray(function(err, doc) {
-//	console.log(doc);
-//    });
+    db.collection('avatar').findOne({_id: req.body.avatarid}, function(err, doc) {
+	req.body.avatartype = doc.type;
+	req.body.avatar = doc.data;
 
-    db.collection('userlist').save(req.body, function(err, result) {
-	res.send(
-	    (err === null) ? {msg: ''} : {msg: err}
-	);
+	db.collection('userlist').save(req.body, function(err, result) {
+	    res.send(
+		(err === null) ? {msg: ''} : {msg: err}
+	    );
+	});
     });
 });
 
@@ -33,24 +36,25 @@ router.post('/modifyuser', function(req, res) {
 router.post('/avatar', function(req, res) {
     'use strict';
 
-    console.log("let's rock");
-
+    var db = req.db;
     var path = require('path');
     var fs = require('fs');
     // Since Node 0.8, .existsSync() moved from path to fs:
     var _existsSync = fs.existsSync || path.existsSync;
     var formidable = require('formidable');
-    var nodeStatic = require('node-static'),
+    var nodeStatic = require('node-static');
     var imageMagick = require('imagemagick');
     var options = {
-        tmpDir: __dirname + '/tmp',
+        //tmpDir: __dirname + '/tmp',
+	tmpDir: '/tmp',
         publicDir: __dirname + '/public',
         uploadDir: __dirname + '/public/files',
         uploadUrl: '/files/',
         maxPostSize: 11000000000, // 11 GB
         minFileSize: 1,
         maxFileSize: 10000000000, // 10 GB
-        acceptFileTypes: /.+/i,
+        // acceptFileTypes: /.+/i,
+	acceptFileTypes: /\.(gif|jpe?g|png)$/i,
         // Files not matched by this regular expression force a download dialog,
         // to prevent executing any scripts in the context of the service domain:
         inlineFileTypes: /\.(gif|jpe?g|png)$/i,
@@ -95,73 +99,6 @@ router.post('/avatar', function(req, res) {
         this.res = res;
         this.callback = callback;
     };
-    var serve = function (req, res) {
-        res.setHeader(
-            'Access-Control-Allow-Origin',
-            options.accessControl.allowOrigin
-        );
-        res.setHeader(
-            'Access-Control-Allow-Methods',
-            options.accessControl.allowMethods
-        );
-        res.setHeader(
-            'Access-Control-Allow-Headers',
-            options.accessControl.allowHeaders
-        );
-        var handleResult = function (result, redirect) {
-            if (redirect) {
-                res.writeHead(302, {
-                    'Location': redirect.replace(
-                            /%s/,
-                        encodeURIComponent(JSON.stringify(result))
-                    )
-                });
-                res.end();
-            } else {
-                res.writeHead(200, {
-                    'Content-Type': req.headers.accept
-                        .indexOf('application/json') !== -1 ?
-                        'application/json' : 'text/plain'
-                });
-                res.end(JSON.stringify(result));
-            }
-        },
-        setNoCacheHeaders = function () {
-            res.setHeader('Pragma', 'no-cache');
-            res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
-            res.setHeader('Content-Disposition', 'inline; filename="files.json"');
-        },
-        handler = new UploadHandler(req, res, handleResult);
-        switch (req.method) {
-        case 'OPTIONS':
-            res.end();
-            break;
-        case 'HEAD':
-        case 'GET':
-            if (req.url === '/') {
-                setNoCacheHeaders();
-                if (req.method === 'GET') {
-                    handler.get();
-                } else {
-                    res.end();
-                }
-            } else {
-                fileServer.serve(req, res);
-            }
-            break;
-        case 'POST':
-            setNoCacheHeaders();
-            handler.post();
-            break;
-        case 'DELETE':
-            handler.destroy();
-            break;
-        default:
-            res.statusCode = 405;
-            res.end();
-        }
-    };
-
 
     fileServer.respond = function (pathname, status, _headers, files, stat, req, res, finish) {
         // Prevent browsers from MIME-sniffing the content-type:
@@ -267,6 +204,27 @@ router.post('/avatar', function(req, res) {
                 fs.unlink(file.path);
                 return;
             }
+
+	    fileInfo._id = new ObjectID();
+	    fileInfo.date = new Date();
+	    var data = fs.readFileSync(file.path);
+	    fileInfo.data = new MongoDb.Binary(data);
+
+	    console.log(fileInfo);
+
+	    db.collection('avatar').save(fileInfo, function(err, result) {
+		if (err !== null) {
+		    console.log("db save fail");
+		}
+	    });
+
+	    fs.unlink(file.path, function(err) {
+		if (err) {
+		    console.log("unlink failed: " + image.path);
+		}
+	    });
+
+/*
             fs.renameSync(file.path, options.uploadDir + '/' + fileInfo.name);
             if (options.imageTypes.test(fileInfo.name)) {
                 Object.keys(options.imageVersions).forEach(function (version) {
@@ -281,6 +239,8 @@ router.post('/avatar', function(req, res) {
                     }, finish);
                 });
             }
+*/
+
         }).on('aborted', function () {
             tmpFiles.forEach(function (file) {
                 fs.unlink(file);
@@ -310,14 +270,77 @@ router.post('/avatar', function(req, res) {
         }
         handler.callback({success: false});
     };
-    if (options.ssl) {
-        require('https').createServer(options.ssl, serve).listen(port);
-    } else {
-        require('http').createServer(serve).listen(port);
-    }
 
 
-    res.send({msg: "success"});
+
+
+        res.setHeader(
+            'Access-Control-Allow-Origin',
+            options.accessControl.allowOrigin
+        );
+        res.setHeader(
+            'Access-Control-Allow-Methods',
+            options.accessControl.allowMethods
+        );
+        res.setHeader(
+            'Access-Control-Allow-Headers',
+            options.accessControl.allowHeaders
+        );
+        var handleResult = function (result, redirect) {
+            if (redirect) {
+                res.writeHead(302, {
+                    'Location': redirect.replace(
+                            /%s/,
+                        encodeURIComponent(JSON.stringify(result))
+                    )
+                });
+                res.end();
+            } else {
+                res.writeHead(200, {
+                    'Content-Type': req.headers.accept
+                        .indexOf('application/json') !== -1 ?
+                        'application/json' : 'text/plain'
+                });
+                res.end(JSON.stringify(result));
+            }
+        },
+        setNoCacheHeaders = function () {
+            res.setHeader('Pragma', 'no-cache');
+            res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+            res.setHeader('Content-Disposition', 'inline; filename="files.json"');
+        },
+        handler = new UploadHandler(req, res, handleResult);
+
+        switch (req.method) {
+        case 'OPTIONS':
+            res.end();
+            break;
+        case 'HEAD':
+        case 'GET':
+            if (req.url === '/') {
+                setNoCacheHeaders();
+                if (req.method === 'GET') {
+                    handler.get();
+                } else {
+                    res.end();
+                }
+            } else {
+                fileServer.serve(req, res);
+            }
+            break;
+        case 'POST':
+            setNoCacheHeaders();
+            handler.post();
+            break;
+        case 'DELETE':
+            handler.destroy();
+            break;
+        default:
+            res.statusCode = 405;
+            res.end();
+        };
+
+    console.log("the end");
 
 });
 

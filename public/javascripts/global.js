@@ -5,16 +5,20 @@ var userListData = [];
 $(document).ready(function() {
     // Populate the user table on initial page load
     populateTable();
+
+    popupForm();
+    file_upload();
+
     // Username link click
     $('#userList table tbody').on('click', 'td a.linkshowuser', showUserInfo);
     // Delete User link click
     $('#userList table tbody').on('click', 'td a.linkdeleteuser', alertInfo);
 
-    $('#btnModify').on('click', modifyUser);
-    $('#btnDelete').on('click', deleteUser);
-
-    popupForm();
-    file_upload();
+    $('#btnModify').button().click(modifyUser);
+    $('#btnDelete').button().on('click', deleteUser);
+    $('#add-user').button().click(function() {
+        $( "#dialog-form" ).dialog( "open" );
+    });
 });
 
 
@@ -73,6 +77,8 @@ function showUserInfo(event) {
     // Get our User Object
     var thisUserObject = userListData[arrayPosition];
 
+    var html = '<img height=80 width=80 src="data:' + thisUserObject.avatartype + ';base64, ' + thisUserObject.avatar + '" />';
+
     // populate into form
     $('#userInfo fieldset input#inputUserId').val(thisUserObject._id);
     $('#userInfo fieldset input#inputUserName').val(thisUserObject.username);
@@ -82,6 +88,7 @@ function showUserInfo(event) {
     $('#userInfo fieldset input#inputUserLocation').val(thisUserObject.location);
     $('#userInfo fieldset input#inputUserGender').val(thisUserObject.gender);
     $('#userInfo fieldset textarea#textareaUserNotes').val(thisUserObject.notes);
+    $('#userInfo fieldset #UserAvatar').html(html);
 
 };
 
@@ -222,7 +229,7 @@ function popupForm() {
     
     $( "#dialog-form" ).dialog({
 	autoOpen: false,
-	height: 540,
+	height: 640,
 	width: 400,
 	modal: true,
 	buttons: {
@@ -251,7 +258,8 @@ function popupForm() {
 			'age': $('#dialog-form fieldset input#popupUserAge').val(),
 			'location': $('#dialog-form fieldset input#popupUserLocation').val(),
 			'gender': $('#dialog-form fieldset input#popupUserGender').val(),
-			'notes': $('#dialog-form fieldset textarea#popupUserNotes').val()
+			'notes': $('#dialog-form fieldset textarea#popupUserNotes').val(),
+			'avatarid': $('#dialog-form fieldset #avatar input#avatarId').val()
 		    };
 
 		    // Use AJAX to post the object to our adduser service
@@ -287,11 +295,6 @@ function popupForm() {
 	}
     });
     
-    $( "#add-user" )
-	.button()
-	.click(function() {
-            $( "#dialog-form" ).dialog( "open" );
-	});
 };
 
 function file_upload() {
@@ -302,7 +305,9 @@ function file_upload() {
         dataType: 'json',
         done: function (e, data) {
             $.each(data.result.files, function (index, file) {
-                $('<p/>').text(file.name).appendTo('#files');
+		var html = '<img height=80 width=80 src="data:' + file.type + ';base64, ' + file.data + '" />';
+		$('#dialog-form fieldset #avatar #avatarImg').html(html);
+		$('#dialog-form fieldset #avatar input#avatarId').val(file._id);
             });
         },
         progressall: function (e, data) {
