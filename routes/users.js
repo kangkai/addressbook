@@ -14,14 +14,22 @@ router.get('/userlist', function(req, res) {
 /* POST to add user */
 router.post('/modifyuser', function(req, res) {
     var db = req.db;
-    var found = '';
+    var collection = '';
+    var id = '';
 
     req.body._id = ObjectID(req.body._id);
-    req.body.avatarid = ObjectID(req.body.avatarid);
 
-    db.collection('avatar').findOne({_id: req.body.avatarid}, function(err, doc) {
-	req.body.avatartype = doc.type;
-	req.body.avatar = doc.data;
+    if (req.body.avatarid) {
+	id = req.body.avatarid = ObjectID(req.body.avatarid);
+	collection = 'avatar';
+    } else {
+	id = req.body._id;
+	collection = 'userlist';
+    }
+
+    db.collection(collection).findOne({_id: id}, function(err, doc) {
+	req.body.avatartype = (collection === 'avatar') ? doc.type : doc.avatartype;
+	req.body.avatar = (collection === 'avatar') ? doc.data : doc.avatar;
 
 	db.collection('userlist').save(req.body, function(err, result) {
 	    res.send(
@@ -43,7 +51,7 @@ router.post('/avatar', function(req, res) {
     var _existsSync = fs.existsSync || path.existsSync;
     var formidable = require('formidable');
     var nodeStatic = require('node-static');
-    var imageMagick = require('imagemagick');
+    // var imageMagick = require('imagemagick');
     var options = {
         //tmpDir: __dirname + '/tmp',
 	tmpDir: '/tmp',
