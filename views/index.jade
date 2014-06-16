@@ -5,9 +5,7 @@ block content
 
   #wrapper
 
-    button#add-user Add User
-
-    #dialog-form(title='Add new user')
+    #dialog-form(title='New/Modify user')
       form
         p(class="validateTips") All fields required except "Notes".
         fieldset(style="text-align:right;")
@@ -45,6 +43,7 @@ block content
 
 
     #userList
+      button#add-user Add User
       table
         thead
           th UserName
@@ -54,6 +53,32 @@ block content
 
 
     #userInfo
+      button#btnDelete Delete
+      button#btnModify Modify
+      input#db_id(type='hidden')
+      input#is_modify(type='hidden')
+
+      article(class="contact-container")
+        #UserAvatar
+        h1
+          span#name
+          span#category
+        #address
+        dl
+          dt Nick: 
+          dd#nick
+          dt Mobile: 
+          dd#mobile
+          dt Email: 
+          dd#email
+          dt Birthday: 
+          dd#birthday
+          dt Gender: 
+          dd#gender
+          dt Notes: 
+          dd#notes
+
+
       form#userInfoForm(method="post" enctype="multipart/form-data")
       fieldset(style="text-align:right;")
         legend

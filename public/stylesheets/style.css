@@ -11,15 +11,14 @@ a {
     color: #00B7FF;
 }
 
-#wrapper {
-    padding-left:400px;
-    position:relative;
+#userInfo {
+    width: 400px;
+    float:left;
 }
 
 #userList {
-    position:absolute;
     top:0; left:0;
-    width:250px;
+    float: right;
 }
 #userList table {
     border-collapse:separate;
@@ -48,4 +47,74 @@ fieldset {
     padding:30px 10px 10px 0;
     margin:0;
     background:rgba(80,120,255,0.05);
+}
+
+
+.contact-container { 
+    width:400px; 
+    padding:10px; 
+    border:1px solid #aaa; 
+    margin:0 10px 10px 0; 
+    float:left; 
+    font-family:sans-serif; 
+    color:#333; 
+    background-color:#eee; 
+}
+
+.contact-container h1 { 
+    margin:0; 
+    font-weight:normal; 
+}
+
+.contact-container h1 #category { 
+    float:right; 
+    font-size:14px; 
+    line-height:24px; 
+    font-weight:normal; 
+}
+
+.contact-container img { 
+    border-width:1px; 
+    border-style:solid; 
+    border-color:#fff; 
+    border-right-color:#aaa; 
+    border-bottom-color:#aaa; 
+    margin-right:10px; 
+    float:left; 
+}
+
+#UserAvatar img { 
+    border-width:1px; 
+    border-style:solid; 
+    border-color:#fff; 
+    border-right-color:#aaa; 
+    border-bottom-color:#aaa; 
+    margin-right:10px; 
+    float:left;
+    width: 100px
+}
+
+.contact-container #address { 
+    margin-bottom:24px; 
+    font-size:14px; 
+}
+
+.contact-container a { 
+    color:#333;
+}
+
+.contact-container dl { 
+    margin:0; 
+    float:left; 
+    font-size:14px; 
+}
+
+.contact-container dt, .contact-container dd { 
+    margin:0; 
+    float:left; 
+}
+
+.contact-container dt { 
+    width:80px; 
+    clear:left; 
 }

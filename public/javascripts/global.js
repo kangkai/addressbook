@@ -77,7 +77,7 @@ function showUserInfo(event) {
     // Get our User Object
     var thisUserObject = userListData[arrayPosition];
 
-    var html = '<img height=80 width=80 src="data:' + thisUserObject.avatartype + ';base64, ' + thisUserObject.avatar + '" />';
+    var html = '<img src="data:' + thisUserObject.avatartype + ';base64, ' + thisUserObject.avatar + '" />';
 
     // populate into form
     $('#userInfo fieldset input#inputUserId').val(thisUserObject._id);
@@ -88,13 +88,29 @@ function showUserInfo(event) {
     $('#userInfo fieldset input#inputUserLocation').val(thisUserObject.location);
     $('#userInfo fieldset input#inputUserGender').val(thisUserObject.gender);
     $('#userInfo fieldset textarea#textareaUserNotes').val(thisUserObject.notes);
-    $('#userInfo fieldset #UserAvatar').html(html);
+    $('fieldset #UserAvatar').html(html);
+
+    $('#dbid').val(thisUserObject._id);
+    $('#UserAvatar').html(html);
+    $('#name').html(thisUserObject.fullname);
+    $('#category').html(thisUserObject.fullname);
+    $('#address').html(thisUserObject.location);
+    $('#nick').html(thisUserObject.username);
+    $('#mobile').html(thisUserObject.email);
+    $('#email').html(thisUserObject.email);
+    $('#birthday').html(thisUserObject.age);
+    $('#gender').html(thisUserObject.gender);
+    $('#notes').html(thisUserObject.notes);
 
 };
 
 // Modify User
 function modifyUser(event) {
     event.preventDefault();
+
+    $('#is_modify').val("true");
+    $( "#dialog-form" ).dialog( "open" );
+    return;
 
     // Super basic validation - increase errorCount variable if any fields are blank
     var errorCount = 0;
@@ -233,7 +249,7 @@ function popupForm() {
 	width: 400,
 	modal: true,
 	buttons: {
-            "Add User": function() {
+            "Apply": function() {
 		var bValid = true;
 		allFields.removeClass( "ui-state-error" );
 		
@@ -289,9 +305,19 @@ function popupForm() {
 		$( this ).dialog( "close" );
             }
 	},
+	open: function(event, ui) {
+	    // event triggered after dialog opened.
+
+	    if ($('#is_modify').val()) {
+		useremail.val("kai@test");
+	    }
+	},
 	close: function() {
             allFields.val( "" ).removeClass( "ui-state-error" );
             usernotes.val( "" ).removeClass( "ui-state-error" );
+	    $("#db_id").val('');
+	    $("#is_modify").val('');
+
 	}
     });
     
