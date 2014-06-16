@@ -90,18 +90,24 @@ function showUserInfo(event) {
     $('#userInfo fieldset textarea#textareaUserNotes').val(thisUserObject.notes);
     $('fieldset #UserAvatar').html(html);
 
-    $('#dbid').val(thisUserObject._id);
+    $('#db_id').val(thisUserObject._id);
     $('#UserAvatar').html(html);
-    $('#name').html(thisUserObject.fullname);
+//     $('#name').html(thisUserObject.fullname);
+//     $('#category').html(thisUserObject.fullname);
+//     $('#address').html(thisUserObject.location);
+//     $('#nick').html(thisUserObject.username);
+//     $('#mobile').html(thisUserObject.email);
+//     $('#email').html(thisUserObject.email);
+//     $('#birthday').html(thisUserObject.age);
+//     $('#gender').html(thisUserObject.gender);
+//     $('#notes').html(thisUserObject.notes);
+    $('#name').html(thisUserObject.username);
     $('#category').html(thisUserObject.fullname);
     $('#address').html(thisUserObject.location);
-    $('#nick').html(thisUserObject.username);
-    $('#mobile').html(thisUserObject.email);
     $('#email').html(thisUserObject.email);
     $('#birthday').html(thisUserObject.age);
     $('#gender').html(thisUserObject.gender);
     $('#notes').html(thisUserObject.notes);
-
 };
 
 // Modify User
@@ -211,8 +217,12 @@ function popupForm() {
 	usernotes = $("#popupUserNotes");
     var tips = $( ".validateTips" );
 
+    var thisUserId = 0;
+    var arrayPosition = 0;
+    var thisUserObject = userListData[arrayPosition];
+
     var allFields = $([]).add(userid).add(useremail).add(userfullname).add(userage).add(userlocation).add(usergender);
-    
+
     function updateTips(t) {
 	tips
             .text( t )
@@ -221,7 +231,7 @@ function popupForm() {
             tips.removeClass( "ui-state-highlight", 1500 );
 	}, 500 );
     }
-    
+
     function checkLength( o, n, min, max ) {
 	if ( o.val().length > max || o.val().length < min ) {
             o.addClass( "ui-state-error" );
@@ -232,7 +242,7 @@ function popupForm() {
             return true;
 	}
     }
-    
+
     function checkRegexp( o, regexp, n ) {
 	if ( !( regexp.test( o.val() ) ) ) {
             o.addClass( "ui-state-error" );
@@ -242,7 +252,7 @@ function popupForm() {
             return true;
 	}
     }
-    
+
     $( "#dialog-form" ).dialog({
 	autoOpen: false,
 	height: 640,
@@ -252,19 +262,19 @@ function popupForm() {
             "Apply": function() {
 		var bValid = true;
 		allFields.removeClass( "ui-state-error" );
-		
+
 		bValid = bValid && checkLength( userid, "userid", 3, 16 );
 		bValid = bValid && checkLength( useremail, "email", 6, 80 );
 		bValid = bValid && checkLength( userfullname, "Full Name", 3, 80 );
 		bValid = bValid && checkLength( userage, "Age", 1, 3 );
 		bValid = bValid && checkLength( userlocation, "Location", 3, 80 );
 		bValid = bValid && checkLength( usergender, "Gender", 1, 6 );
-		
+
 		bValid = bValid && checkRegexp( userid, /^[a-z]([0-9a-z_])+$/i, "Username may consist of a-z, 0-9, underscores, begin with a letter." );
 		// From jquery.validate.js (by joern), contributed by Scott Gonzalez: http://projects.scottsplayground.com/email_address_validation/
 		bValid = bValid && checkRegexp( useremail, /^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i, "eg. ui@jquery.com" );
 		// bValid = bValid && checkRegexp( password, /^([0-9a-zA-Z])+$/, "Password field only allow : a-z 0-9" );
-		
+
 		if ( bValid ) {
 
 		    var userInfo = {
@@ -309,18 +319,29 @@ function popupForm() {
 	    // event triggered after dialog opened.
 
 	    if ($('#is_modify').val()) {
-		useremail.val("kai@test");
+		thisUserId = $('#db_id').val();
+		console.log(thisUserId);
+		arrayPosition = userListData.map(function(arrayItem) { return arrayItem._id; }).indexOf(thisUserId);
+		thisUserObject = userListData[arrayPosition];
+		console.log(thisUserObject);
+
+		userid.val(thisUserObject.username);
+		useremail.val(thisUserObject.email);
+		userfullname.val(thisUserObject.fullname);
+		userage.val(thisUserObject.age);
+		userlocation.val(thisUserObject.location);
+		usergender.val(thisUserObject.gender);
+		usernotes.val(thisUserObject.notes);
 	    }
 	},
 	close: function() {
             allFields.val( "" ).removeClass( "ui-state-error" );
             usernotes.val( "" ).removeClass( "ui-state-error" );
-	    $("#db_id").val('');
 	    $("#is_modify").val('');
 
 	}
     });
-    
+
 };
 
 function file_upload() {
@@ -346,4 +367,3 @@ function file_upload() {
     }).prop('disabled', !$.support.fileInput)
         .parent().addClass($.support.fileInput ? undefined : 'disabled');
 };
-
