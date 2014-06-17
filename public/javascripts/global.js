@@ -239,7 +239,7 @@ function popupForm() {
 			'location': $('#dialog-form fieldset input#popupUserLocation').val(),
 			'gender': $('#dialog-form fieldset input#popupUserGender').val(),
 			'notes': $('#dialog-form fieldset textarea#popupUserNotes').val(),
-			'avatarid': $('#dialog-form fieldset #avatar input#avatarId').val()
+			'avatarid': $('#avatarId').val()
 		    };
 
 		    // Use AJAX to post the object to our adduser service
@@ -277,15 +277,15 @@ function popupForm() {
 		arrayPosition = userListData.map(function(arrayItem) { return arrayItem._id; }).indexOf(thisUserId);
 		thisUserObject = userListData[arrayPosition];
 
-		var html = '';
+		var src = '';
 
 		if (thisUserObject.avatartype && thisUserObject.avatardata) {
-		    html = '<img src="data:' + thisUserObject.avatartype + ';base64, ' + thisUserObject.avatardata + '" />';
+		    src = 'data:' + thisUserObject.avatartype + ';base64, ' + thisUserObject.avatardata;
 		} else {
-		    html = '<img src="images/placeholder.png">'
+		    src = 'images/placeholder.png';
 		}
 
-		$('fieldset #UserAvatar').html(html);
+		$('#avatarupload').attr("src", src);
 
 		userid.val(thisUserObject.username);
 		useremail.val(thisUserObject.email);
@@ -294,14 +294,15 @@ function popupForm() {
 		userlocation.val(thisUserObject.location);
 		usergender.val(thisUserObject.gender);
 		usernotes.val(thisUserObject.notes);
+	    } else {
+		$('#db_id').val('');
 	    }
 	},
 	close: function() {
             allFields.val( "" ).removeClass( "ui-state-error" );
             usernotes.val( "" ).removeClass( "ui-state-error" );
 	    $("#is_modify").val('');
-	    $('fieldset #UserAvatar').html('');
-	    $('#avatarImg').html('');
+	    $('#avatarupload').attr("src", 'images/placeholder.png');
 	}
     });
 
@@ -310,14 +311,20 @@ function popupForm() {
 function file_upload() {
     'use strict';
 
+    $('#avatarupload').click(function () {
+	$('#fileupload').trigger('click');
+    });
+
     $('#fileupload').fileupload({
         url: '/users/avatar',
         dataType: 'json',
         done: function (e, data) {
             $.each(data.result.files, function (index, file) {
-		var html = '<img height=80 width=80 src="data:' + file.avatartype + ';base64, ' + file.avatardata + '" />';
-		$('#dialog-form fieldset #avatar #avatarImg').html(html);
-		$('#dialog-form fieldset #avatar input#avatarId').val(file._id);
+		var src = 'data:' + file.avatartype + ';base64, ' + file.avatardata;
+
+		$('#avatarupload').attr("src", src);
+		$('#avatarId').val(file._id);
+		console.log(file);
             });
         },
         progressall: function (e, data) {

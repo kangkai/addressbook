@@ -17,7 +17,11 @@ router.post('/modifyuser', function(req, res) {
     var collection = '';
     var id = '';
 
-    req.body._id = ObjectID(req.body.db_id);
+    if (req.body.db_id) {
+	req.body._id = ObjectID(req.body.db_id);
+    } else {
+	req.body._id = ObjectID();
+    }
     req.body.db_id = '';
 
     if (req.body.avatarid) {
@@ -29,8 +33,10 @@ router.post('/modifyuser', function(req, res) {
     }
 
     db.collection(collection).findOne({_id: id}, function(err, doc) {
-	req.body.avatartype = doc.avatartype;
-	req.body.avatardata = doc.avatardata;
+	if (doc) {
+	    req.body.avatartype = doc.avatartype;
+	    req.body.avatardata = doc.avatardata;
+	}
 
 	db.collection('userlist').save(req.body, function(err, result) {
 	    res.send(

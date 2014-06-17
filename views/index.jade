@@ -10,6 +10,10 @@ block content
         p(class="validateTips") All fields required except "Notes".
         fieldset(style="text-align:right;")
           #UserAvatar
+            img#avatarupload(style="cursor:pointer", src="images/placeholder.png")
+            input#fileupload(type="file", name="files[]", style="display:none")
+            input#avatarId(type='hidden')
+
           label User Id: 
           input#popupUserId(type='text', placeholder='User Id' value="" class="text ui-widget-content ui-corner-all")
           br
@@ -33,14 +37,8 @@ block content
           br
 
           span(class="btn btn-success fileinput-button")
-            i(class="glyphicon glyphicon-plus")
-            span Select avata image...
-            input#fileupload(type="file" name="files[]" multiple)
           #progress(class="progress")
             #progressbar(class="progress-bar progress-bar-success")
-          #avatar
-            #avatarImg
-            input#avatarId(type='hidden')
 
 
     #userList
