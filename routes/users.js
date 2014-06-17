@@ -17,7 +17,8 @@ router.post('/modifyuser', function(req, res) {
     var collection = '';
     var id = '';
 
-    req.body._id = ObjectID(req.body._id);
+    req.body._id = ObjectID(req.body.db_id);
+    req.body.db_id = '';
 
     if (req.body.avatarid) {
 	id = req.body.avatarid = ObjectID(req.body.avatarid);
@@ -28,8 +29,8 @@ router.post('/modifyuser', function(req, res) {
     }
 
     db.collection(collection).findOne({_id: id}, function(err, doc) {
-	req.body.avatartype = (collection === 'avatar') ? doc.type : doc.avatartype;
-	req.body.avatar = (collection === 'avatar') ? doc.data : doc.avatar;
+	req.body.avatartype = doc.avatartype;
+	req.body.avatardata = doc.avatardata;
 
 	db.collection('userlist').save(req.body, function(err, result) {
 	    res.send(
@@ -99,7 +100,7 @@ router.post('/avatar', function(req, res) {
     var FileInfo = function (file) {
         this.name = file.name;
         this.size = file.size;
-        this.type = file.type;
+        this.avatartype = file.type;
         this.deleteType = 'DELETE';
     };
     var UploadHandler = function (req, res, callback) {
@@ -216,7 +217,7 @@ router.post('/avatar', function(req, res) {
 	    fileInfo._id = new ObjectID();
 	    fileInfo.date = new Date();
 	    var data = fs.readFileSync(file.path);
-	    fileInfo.data = new MongoDb.Binary(data);
+	    fileInfo.avatardata = new MongoDb.Binary(data);
 
 	    db.collection('avatar').save(fileInfo, function(err, result) {
 		if (err !== null) {

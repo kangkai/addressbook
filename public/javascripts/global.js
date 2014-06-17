@@ -78,8 +78,8 @@ function showUserInfo(event) {
     var thisUserObject = userListData[arrayPosition];
 
     var html = '';
-    if (thisUserObject.avatartype) {
-	html = '<img src="data:' + thisUserObject.avatartype + ';base64, ' + thisUserObject.avatar + '" />';
+    if (thisUserObject.avatartype && thisUserObject.avatardata) {
+	html = '<img src="data:' + thisUserObject.avatartype + ';base64, ' + thisUserObject.avatardata + '" />';
     } else {
 	html = '<img src="images/placeholder.png">'
     }
@@ -261,7 +261,7 @@ function popupForm() {
     $( "#dialog-form" ).dialog({
 	autoOpen: false,
 	height: 640,
-	width: 400,
+	width: 460,
 	modal: true,
 	buttons: {
             "Apply": function() {
@@ -283,6 +283,7 @@ function popupForm() {
 		if ( bValid ) {
 
 		    var userInfo = {
+			'db_id': $('#db_id').val(),
 			'username': $('#dialog-form fieldset input#popupUserId').val(),
 			'email': $('#dialog-form fieldset input#popupUserEmail').val(),
 			'fullname': $('#dialog-form fieldset input#popupUserFullname').val(),
@@ -325,10 +326,8 @@ function popupForm() {
 
 	    if ($('#is_modify').val()) {
 		thisUserId = $('#db_id').val();
-		console.log(thisUserId);
 		arrayPosition = userListData.map(function(arrayItem) { return arrayItem._id; }).indexOf(thisUserId);
 		thisUserObject = userListData[arrayPosition];
-		console.log(thisUserObject);
 
 		userid.val(thisUserObject.username);
 		useremail.val(thisUserObject.email);
@@ -357,7 +356,7 @@ function file_upload() {
         dataType: 'json',
         done: function (e, data) {
             $.each(data.result.files, function (index, file) {
-		var html = '<img height=80 width=80 src="data:' + file.type + ';base64, ' + file.data + '" />';
+		var html = '<img height=80 width=80 src="data:' + file.avatartype + ';base64, ' + file.avatardata + '" />';
 		$('#dialog-form fieldset #avatar #avatarImg').html(html);
 		$('#dialog-form fieldset #avatar input#avatarId').val(file._id);
             });
