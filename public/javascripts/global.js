@@ -77,7 +77,12 @@ function showUserInfo(event) {
     // Get our User Object
     var thisUserObject = userListData[arrayPosition];
 
-    var html = '<img src="data:' + thisUserObject.avatartype + ';base64, ' + thisUserObject.avatar + '" />';
+    var html = '';
+    if (thisUserObject.avatartype) {
+	html = '<img src="data:' + thisUserObject.avatartype + ';base64, ' + thisUserObject.avatar + '" />';
+    } else {
+	html = '<img src="images/placeholder.png">'
+    }
 
     // populate into form
     $('#userInfo fieldset input#inputUserId').val(thisUserObject._id);
