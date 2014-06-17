@@ -115,54 +115,8 @@ function modifyUser(event) {
 
     $('#is_modify').val("true");
     $( "#dialog-form" ).dialog( "open" );
+
     return;
-
-    // Super basic validation - increase errorCount variable if any fields are blank
-    var errorCount = 0;
-    $('#userInfo input').each(function(index, val) {
-        if($(this).val() === '') { errorCount++; }
-    });
-
-    // Check and make sure errorCount's still at zero
-    if(errorCount === 0) {
-
-        // If it is, compile all user info into one object
-        var userInfo = {
-            '_id': $('#userInfo fieldset input#inputUserId').val(),
-            'username': $('#userInfo fieldset input#inputUserName').val(),
-            'email': $('#userInfo fieldset input#inputUserEmail').val(),
-            'fullname': $('#userInfo fieldset input#inputUserFullname').val(),
-            'age': $('#userInfo fieldset input#inputUserAge').val(),
-            'location': $('#userInfo fieldset input#inputUserLocation').val(),
-            'gender': $('#userInfo fieldset input#inputUserGender').val(),
-            'notes': $('#userInfo fieldset textarea#textareaUserNotes').val()
-        };
-
-        // Use AJAX to post the object to our adduser service
-        $.ajax({
-            type: 'POST',
-            data: userInfo,
-            url: '/users/modifyuser',
-            dataType: 'JSON'
-        }).done(function( response ) {
-
-            // Check for successful (blank) response
-            if (response.msg === '') {
-		refreshPage();
-            }
-            else {
-
-                // If something goes wrong, alert the error message that our service returned
-                alert('Error: ' + response.msg);
-
-            }
-        });
-    }
-    else {
-        // If errorCount is more than 0, error out
-        alert('Please fill in all fields');
-        return false;
-    }
 };
 
 
