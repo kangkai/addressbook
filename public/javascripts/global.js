@@ -55,6 +55,8 @@ function refresh_userinfo(id) {
 	$('#birthday').html('');
 	$('#gender').html('');
 	$('#notes').html('');
+
+	return;
     }
 
     var arrayPosition = userListData.map(function(arrayItem) { return arrayItem._id; }).indexOf(id);
@@ -321,6 +323,16 @@ function popupForm() {
 		arrayPosition = userListData.map(function(arrayItem) { return arrayItem._id; }).indexOf(thisUserId);
 		thisUserObject = userListData[arrayPosition];
 
+		var html = '';
+
+		if (thisUserObject.avatartype && thisUserObject.avatardata) {
+		    html = '<img src="data:' + thisUserObject.avatartype + ';base64, ' + thisUserObject.avatardata + '" />';
+		} else {
+		    html = '<img src="images/placeholder.png">'
+		}
+
+		$('fieldset #UserAvatar').html(html);
+
 		userid.val(thisUserObject.username);
 		useremail.val(thisUserObject.email);
 		userfullname.val(thisUserObject.fullname);
@@ -334,7 +346,8 @@ function popupForm() {
             allFields.val( "" ).removeClass( "ui-state-error" );
             usernotes.val( "" ).removeClass( "ui-state-error" );
 	    $("#is_modify").val('');
-
+	    $('fieldset #UserAvatar').html('');
+	    $('#avatarImg').html('');
 	}
     });
 
