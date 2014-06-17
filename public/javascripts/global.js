@@ -3,8 +3,7 @@ var userListData = [];
 
 // DOM Ready =============================================================
 $(document).ready(function() {
-    // Populate the user table on initial page load
-    populateTable();
+    refreshPage();
 
     popupForm();
     file_upload();
@@ -21,8 +20,6 @@ $(document).ready(function() {
     });
 });
 
-
-
 function alertInfo(event) {
     _.each(userListData, function (obj) {
 	console.log(JSON.stringify(obj));
@@ -30,36 +27,72 @@ function alertInfo(event) {
     alert($(this).attr('rel'));
 };
 
+
+function refresh_userlist(data) {
+    var tableContent;
+
+    // data is array of user info
+    $.each(data, function() {
+        tableContent += '<tr>';
+        tableContent += '<td><a href="#" class="linkshowuser" rel="' + this._id + '" title="Show Details">' + this.username + '</td>';
+        tableContent += '<td>' + this.email + '</td>';
+        tableContent += '<td><a href="#" class="linkdeleteuser" rel="' + this._id + '">delete</a></td>';
+        tableContent += '</tr>';
+    });
+
+    // Inject the whole content string into our existing HTML table
+    $('#userList table tbody').html(tableContent);
+};
+
+function refresh_userinfo(id) {
+    if (!id) {
+	// clean up
+	$('#UserAvatar').html('');
+	$('#name').html('');
+	$('#category').html('');
+	$('#address').html('');
+	$('#email').html('');
+	$('#birthday').html('');
+	$('#gender').html('');
+	$('#notes').html('');
+    }
+
+    var arrayPosition = userListData.map(function(arrayItem) { return arrayItem._id; }).indexOf(id);
+    var thisUserObject = userListData[arrayPosition];
+    var html = '';
+
+    if (thisUserObject.avatartype && thisUserObject.avatardata) {
+	html = '<img src="data:' + thisUserObject.avatartype + ';base64, ' + thisUserObject.avatardata + '" />';
+    } else {
+	html = '<img src="images/placeholder.png">'
+    }
+
+    $('#UserAvatar').html(html);
+    $('#name').html(thisUserObject.username);
+    $('#category').html(thisUserObject.fullname);
+    $('#address').html(thisUserObject.location);
+    $('#email').html(thisUserObject.email);
+    $('#birthday').html(thisUserObject.age);
+    $('#gender').html(thisUserObject.gender);
+    $('#notes').html(thisUserObject.notes);
+
+    // set the db ._id which we're showing
+    $('#db_id').val(id);
+};
+
 // Fill table with data
-function populateTable() {
-    // Empty content string
-    var tableContent = '';
+function populate_users() {
 
     // jQuery AJAX call for JSON
     $.getJSON('/users/userlist', function(data) {
 	userListData = data;
-
-        // For each item in our JSON, add a table row and cells to the content string
-        $.each(data, function() {
-            tableContent += '<tr>';
-            tableContent += '<td><a href="#" class="linkshowuser" rel="' + this._id + '" title="Show Details">' + this.username + '</td>';
-            tableContent += '<td>' + this.email + '</td>';
-            tableContent += '<td><a href="#" class="linkdeleteuser" rel="' + this._id + '">delete</a></td>';
-            tableContent += '</tr>';
-        });
-
-        // Inject the whole content string into our existing HTML table
-        $('#userList table tbody').html(tableContent);
+	refresh_userlist(data);
+	refresh_userinfo();
     });
 };
 
 function refreshPage() {
-    // Clear the form inputs
-    $('#userInfo fieldset input').val('');
-    $('#userInfo fieldset textarea').val('');
-
-    // Update the table
-    populateTable();
+    populate_users();
 };
 
 // Show User Info
@@ -71,48 +104,7 @@ function showUserInfo(event) {
     // Retrieve username from link rel attribute
     var thisUserId = $(this).attr('rel');
 
-    // Get Index of object based on id value
-    var arrayPosition = userListData.map(function(arrayItem) { return arrayItem._id; }).indexOf(thisUserId);
-
-    // Get our User Object
-    var thisUserObject = userListData[arrayPosition];
-
-    var html = '';
-    if (thisUserObject.avatartype && thisUserObject.avatardata) {
-	html = '<img src="data:' + thisUserObject.avatartype + ';base64, ' + thisUserObject.avatardata + '" />';
-    } else {
-	html = '<img src="images/placeholder.png">'
-    }
-
-    // populate into form
-    $('#userInfo fieldset input#inputUserId').val(thisUserObject._id);
-    $('#userInfo fieldset input#inputUserName').val(thisUserObject.username);
-    $('#userInfo fieldset input#inputUserEmail').val(thisUserObject.email);
-    $('#userInfo fieldset input#inputUserFullname').val(thisUserObject.fullname);
-    $('#userInfo fieldset input#inputUserAge').val(thisUserObject.age);
-    $('#userInfo fieldset input#inputUserLocation').val(thisUserObject.location);
-    $('#userInfo fieldset input#inputUserGender').val(thisUserObject.gender);
-    $('#userInfo fieldset textarea#textareaUserNotes').val(thisUserObject.notes);
-    $('fieldset #UserAvatar').html(html);
-
-    $('#db_id').val(thisUserObject._id);
-    $('#UserAvatar').html(html);
-//     $('#name').html(thisUserObject.fullname);
-//     $('#category').html(thisUserObject.fullname);
-//     $('#address').html(thisUserObject.location);
-//     $('#nick').html(thisUserObject.username);
-//     $('#mobile').html(thisUserObject.email);
-//     $('#email').html(thisUserObject.email);
-//     $('#birthday').html(thisUserObject.age);
-//     $('#gender').html(thisUserObject.gender);
-//     $('#notes').html(thisUserObject.notes);
-    $('#name').html(thisUserObject.username);
-    $('#category').html(thisUserObject.fullname);
-    $('#address').html(thisUserObject.location);
-    $('#email').html(thisUserObject.email);
-    $('#birthday').html(thisUserObject.age);
-    $('#gender').html(thisUserObject.gender);
-    $('#notes').html(thisUserObject.notes);
+    refresh_userinfo(thisUserId);
 };
 
 // Modify User
@@ -177,8 +169,8 @@ function deleteUser(event) {
 
     event.preventDefault();
 
-    var id = $('#userInfo fieldset input#inputUserId').val();
-    var username = $('#userInfo fieldset input#inputUserFullname').val();
+    var id = $('#db_id').val();
+    var username = $('#name').html();
 
     // Pop up a confirmation dialog
     var confirmation = confirm('Are you sure you want to delete this user?\n\n' + username);
